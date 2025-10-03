@@ -1,0 +1,14 @@
+[build]
+  command = "pnpm install --frozen-lockfile && pnpm build"
+  publish = ".next"
+
+[functions]
+  node_bundler = "esbuild"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# Example scheduled function every Monday at 10:00 UTC
+[[scheduled.functions]]
+  name = "weekly-snapshot"
+  cron = "0 10 * * 1"

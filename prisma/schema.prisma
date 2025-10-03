@@ -1,0 +1,86 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  grade     String
+  office    String
+  managerId String?
+  active    Boolean  @default(true)
+}
+
+model Deal {
+  id        String   @id @default(cuid())
+  code      String   @unique
+  name      String
+  client    String
+  sector    String
+  priority  Int
+  status    String
+  leadId    String?
+  startDate DateTime?
+  endDate   DateTime?
+  timezone  String?
+}
+
+model Assignment {
+  id           String   @id @default(cuid())
+  dealId       String
+  userId       String
+  role         String
+  weekStart    DateTime
+  plannedHours Int
+  source       String
+  locked       Boolean  @default(false)
+  @@unique([dealId, userId, weekStart])
+}
+
+model Forecast {
+  id        String   @id @default(cuid())
+  userId    String
+  dealId    String
+  weekStart DateTime
+  hours     Int
+  horizon   String
+  @@index([userId, weekStart])
+}
+
+model Actual {
+  id        String   @id @default(cuid())
+  userId    String
+  dealId    String
+  weekStart DateTime
+  hours     Int
+  @@index([userId, weekStart])
+}
+
+model Capacity {
+  id                       String   @id @default(cuid())
+  userId                   String
+  weekStart                DateTime
+  baseHours                Int
+  vacationHours            Int
+  trainingHours            Int
+  otherDeductionsHours     Int
+  @@unique([userId, weekStart])
+}
+
+model AuditLog {
+  id       String   @id @default(cuid())
+  actorId  String
+  entity   String
+  entityId String
+  action   String
+  before   Json?
+  after    Json?
+  at       DateTime @default(now())
+}
